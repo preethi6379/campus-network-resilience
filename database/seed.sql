@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Campus Network Resilience Visualizer - Seed Data
--- Spacious Coordinates to Guarantee Zero Text / Building Overlap
+-- 3D Buildings & Spacious Satellite Coordinates
 -- ========================================================================
 
 DELETE FROM operation_history;
@@ -19,23 +19,23 @@ INSERT INTO buildings (building_id, name, building_type, location_label) VALUES
 ('BLD_CSE', 'Computer Science Department', 'ACADEMIC', 'West Wing'),
 ('BLD_LIB', 'Central University Library', 'LIBRARY', 'South-East Quad'),
 ('BLD_ADMIN', 'Administrative Headquarters', 'ADMIN', 'South-West Wing'),
-('BLD_DC', 'Campus Data Center & Cloud Vault', 'DATACENTER', 'East Wing Underground');
+('BLD_DC', 'Campus Data Center & Vault', 'DATACENTER', 'East Wing Underground');
 
--- 2. Network Nodes with Spacious Layout
+-- 2. Network Nodes (Each represents a 3D Campus Building & Its Hardware)
 INSERT INTO network_nodes (node_id, name, node_type, building_id, x_pos, y_pos) VALUES
-('NODE_GW', 'Gateway Router (ISP)', 'GATEWAY', 'BLD_GATEWAY', 500, 90),
-('NODE_CORE', 'Campus Core Router', 'CORE_ROUTER', 'BLD_MAIN', 500, 290),
-('NODE_DC_SW', 'Data Center Core Switch', 'SWITCH', 'BLD_DC', 850, 270),
-('NODE_LMS_SRV', 'LMS Server (e-Learning)', 'SERVER', 'BLD_DC', 970, 230),
-('NODE_LIB_PORTAL', 'Digital Library Portal', 'SERVER', 'BLD_DC', 970, 340),
-('NODE_CSE_SW', 'CSE Distribution Switch', 'SWITCH', 'BLD_CSE', 160, 420),
-('NODE_CSE_LAB1', 'CSE High-Perf Computing Lab', 'LAB', 'BLD_CSE', 160, 560),
-('NODE_ADMIN_SW', 'Admin Wing Switch', 'SWITCH', 'BLD_ADMIN', 390, 600),
-('NODE_LIB_SW', 'Central Library Access Switch', 'SWITCH', 'BLD_LIB', 670, 600);
+('NODE_GW', 'Telecom Gateway Tower', 'GATEWAY', 'BLD_GATEWAY', 500, 70),
+('NODE_CORE', 'Main Academic Core Block', 'CORE_ROUTER', 'BLD_MAIN', 500, 320),
+('NODE_CSE_SW', 'Computer Science Department', 'SWITCH', 'BLD_CSE', 150, 480),
+('NODE_CSE_LAB1', 'High-Perf Computing Lab', 'LAB', 'BLD_CSE', 150, 680),
+('NODE_DC_SW', 'Cloud Data Center Hub', 'SWITCH', 'BLD_DC', 850, 320),
+('NODE_LMS_SRV', 'LMS e-Learning Server', 'SERVER', 'BLD_DC', 1040, 240),
+('NODE_LIB_PORTAL', 'Digital Library Vault', 'SERVER', 'BLD_DC', 1040, 400),
+('NODE_ADMIN_SW', 'Administrative HQ', 'SWITCH', 'BLD_ADMIN', 400, 640),
+('NODE_LIB_SW', 'Central University Library', 'SWITCH', 'BLD_LIB', 750, 640);
 
 -- 3. Network Links
 INSERT INTO network_links (link_id, source_node_id, target_node_id, latency_ms, cost, status, is_tree_edge) VALUES
--- Primary tree edges (Link-Cut Tree Backbone)
+-- Primary Backbone (Link-Cut Tree Forest)
 ('LINK_GW_CORE', 'NODE_GW', 'NODE_CORE', 2.1, 5, 'ACTIVE', TRUE),
 ('LINK_CORE_DC', 'NODE_CORE', 'NODE_DC_SW', 1.2, 3, 'ACTIVE', TRUE),
 ('LINK_DC_LMS', 'NODE_DC_SW', 'NODE_LMS_SRV', 0.5, 1, 'ACTIVE', TRUE),
@@ -45,7 +45,7 @@ INSERT INTO network_links (link_id, source_node_id, target_node_id, latency_ms, 
 ('LINK_CORE_ADMIN', 'NODE_CORE', 'NODE_ADMIN_SW', 2.8, 6, 'ACTIVE', TRUE),
 ('LINK_ADMIN_LIB', 'NODE_ADMIN_SW', 'NODE_LIB_SW', 4.5, 12, 'ACTIVE', TRUE),
 
--- Redundant Backup Links (Standby non-tree routes)
+-- Redundant Backup Fiber Links (Standby non-tree routes)
 ('LINK_BACKUP_CSE_DC', 'NODE_CSE_SW', 'NODE_DC_SW', 4.2, 15, 'STANDBY', FALSE),
 ('LINK_BACKUP_GW_DC', 'NODE_GW', 'NODE_DC_SW', 3.8, 20, 'STANDBY', FALSE),
 ('LINK_BACKUP_LIB_DC', 'NODE_LIB_SW', 'NODE_DC_SW', 5.0, 18, 'STANDBY', FALSE);

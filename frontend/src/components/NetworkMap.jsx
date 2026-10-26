@@ -1,6 +1,7 @@
 /**
  * High-Fidelity Architectural Campus Network Map
- * With Device SVG Pictures, Animated Moving Signals, and Coffee Palette
+ * With 3D Isometric Buildings, Amrita Satellite Imagery Background,
+ * Animated Signal Motion, and Zero-Overlap Layout.
  * Authors: Preetika & Avanish Ayyappan
  */
 
@@ -13,19 +14,10 @@ import {
   Zap,
   RefreshCw,
   Layers,
-  Activity
+  Satellite
 } from "lucide-react";
-import { getNodeImage } from "../utils/deviceIcons";
-
-// Campus Architectural Building Enclosures
-const BUILDINGS = [
-  { id: "BLD_GATEWAY", label: "📡 Campus Gate & Telecom Tower", color: "#C7B7A3" },
-  { id: "BLD_MAIN", label: "🏛️ Main Academic Core Block", color: "#E8D8C4" },
-  { id: "BLD_DC", label: "🏢 Cloud Data Center & Vault", color: "#C7B7A3" },
-  { id: "BLD_CSE", label: "💻 Computer Science Department", color: "#C7B7A3" },
-  { id: "BLD_ADMIN", label: "🏢 Administrative Headquarters", color: "#C7B7A3" },
-  { id: "BLD_LIB", label: "📚 Central University Library", color: "#C7B7A3" }
-];
+import { getBuilding3DImage } from "../utils/buildingIcons3D";
+import { AMRITA_SATELLITE_SVG } from "../utils/amritaSatellite";
 
 export default function NetworkMap({
   nodes = [],
@@ -48,29 +40,15 @@ export default function NetworkMap({
 
     const elements = [];
 
-    // 1. Campus Buildings as Parent Compound Enclosures
-    BUILDINGS.forEach((bld) => {
-      elements.push({
-        group: "nodes",
-        data: {
-          id: bld.id,
-          label: bld.label,
-          isBuilding: true,
-          borderColor: bld.color
-        }
-      });
-    });
-
-    // 2. Network Hardware Nodes with SVG Illustrations
+    // 1. Campus 3D Isometric Buildings
     nodes.forEach((n) => {
       elements.push({
         group: "nodes",
         data: {
           id: n.id,
           label: n.name,
-          parent: n.building_id,
           nodeType: n.node_type,
-          nodeImg: getNodeImage(n.node_type)
+          nodeImg: getBuilding3DImage(n.id, n.node_type)
         },
         position: {
           x: n.x_pos || 500,
@@ -79,7 +57,7 @@ export default function NetworkMap({
       });
     });
 
-    // 3. Fiber Optic Links
+    // 2. Fiber Optic Links
     links.forEach((l) => {
       elements.push({
         group: "edges",
@@ -95,7 +73,7 @@ export default function NetworkMap({
       });
     });
 
-    // Initialize Cytoscape
+    // Initialize Cytoscape with 3D Models
     const cy = cytoscape({
       container: containerRef.current,
       elements: elements,
@@ -104,65 +82,45 @@ export default function NetworkMap({
       layout: {
         name: "preset",
         fit: true,
-        padding: 60
+        padding: 70
       },
       style: [
-        // Building Enclosure Styling (Coffee Palette)
+        // 3D Isometric Building Nodes
         {
-          selector: "node[isBuilding]",
-          style: {
-            "label": "data(label)",
-            "background-color": "#220b0f",
-            "background-opacity": 0.65,
-            "border-width": 2,
-            "border-style": "dashed",
-            "border-color": "#c7b7a3",
-            "border-opacity": 0.6,
-            "color": "#e8d8c4",
-            "font-size": "13px",
-            "font-weight": "bold",
-            "text-valign": "top",
-            "text-halign": "center",
-            "text-margin-y": -14,
-            "padding": "34px",
-            "shape": "roundrectangle",
-            "corner-radius": "18px"
-          }
-        },
-        // Hardware Device Nodes with SVG Pictures
-        {
-          selector: "node[!isBuilding]",
+          selector: "node",
           style: {
             "label": "data(label)",
             "background-image": "data(nodeImg)",
             "background-fit": "contain",
             "background-clip": "none",
-            "background-color": "#2e0f14",
-            "width": 50,
-            "height": 50,
-            "border-width": 2.5,
-            "border-color": "#c7b7a3",
-            "border-opacity": 0.9,
-            "color": "#f8fafc",
+            "background-color": "transparent",
+            "background-opacity": 0,
+            "width": 78,
+            "height": 78,
+            "border-width": 0,
+            "color": "#fdfbf7",
             "font-size": "11px",
-            "font-weight": 600,
+            "font-weight": 700,
             "text-valign": "bottom",
-            "text-margin-y": 10,
+            "text-margin-y": 14,
             "text-wrap": "wrap",
-            "text-max-width": "120px",
-            "text-background-color": "#150608",
-            "text-background-opacity": 0.9,
-            "text-background-padding": 3,
-            "text-background-shape": "roundrectangle"
+            "text-max-width": "140px",
+            "text-background-color": "rgba(23, 7, 10, 0.9)",
+            "text-background-opacity": 0.95,
+            "text-background-padding": 4,
+            "text-background-shape": "roundrectangle",
+            "text-border-color": "#c7b7a3",
+            "text-border-width": 1,
+            "text-border-opacity": 0.5
           }
         },
         {
-          selector: "node[!isBuilding]:selected",
+          selector: "node:selected",
           style: {
-            "border-color": "#e8d8c4",
-            "border-width": 4,
-            "width": 56,
-            "height": 56
+            "width": 88,
+            "height": 88,
+            "text-border-color": "#e8d8c4",
+            "text-border-width": 2
           }
         },
         // Edge Base Styling
@@ -171,61 +129,63 @@ export default function NetworkMap({
           style: {
             "curve-style": "bezier",
             "label": "data(label)",
-            "color": "#e8d8c4",
+            "color": "#fdfbf7",
             "font-size": "10px",
-            "font-weight": 600,
-            "text-background-color": "#150608",
+            "font-weight": 700,
+            "text-background-color": "#17070a",
             "text-background-opacity": 0.95,
             "text-background-padding": 3,
             "text-background-shape": "roundrectangle",
+            "text-border-color": "#6d2932",
+            "text-border-width": 1,
             "width": 4.5
           }
         },
-        // Active Links with Animated Signal Dash
+        // Active Fiber with Moving Signal Motion
         {
           selector: 'edge[status = "ACTIVE"]',
           style: {
             "line-color": "#c7b7a3",
             "line-style": "dashed",
             "line-dash-pattern": [10, 6],
-            "shadow-blur": 10,
+            "shadow-blur": 12,
             "shadow-color": "#e8d8c4",
-            "shadow-opacity": 0.4
+            "shadow-opacity": 0.5
           }
         },
-        // Failed / Severed Links
+        // Failed / Severed Fiber Lines
         {
           selector: 'edge[status = "FAILED"]',
           style: {
             "line-color": "#f43f5e",
             "line-style": "solid",
-            "width": 5,
-            "shadow-blur": 20,
+            "width": 5.5,
+            "shadow-blur": 22,
             "shadow-color": "#f43f5e",
-            "shadow-opacity": 0.9
+            "shadow-opacity": 0.95
           }
         },
-        // Recovered Backup Links
+        // Recovered Backup Fiber
         {
           selector: 'edge[status = "RECOVERED"]',
           style: {
             "line-color": "#10b981",
             "line-style": "dashed",
             "line-dash-pattern": [12, 6],
-            "width": 5,
-            "shadow-blur": 15,
+            "width": 5.5,
+            "shadow-blur": 18,
             "shadow-color": "#10b981",
-            "shadow-opacity": 0.7
+            "shadow-opacity": 0.8
           }
         },
         // Standby Redundant Links
         {
           selector: 'edge[status = "STANDBY"]',
           style: {
-            "line-color": "#6d2932",
+            "line-color": "#8f3d4a",
             "line-style": "dotted",
             "width": 3,
-            "opacity": 0.7
+            "opacity": 0.75
           }
         },
         {
@@ -238,7 +198,7 @@ export default function NetworkMap({
       ]
     });
 
-    // Map Click Handlers
+    // Tap on Link
     cy.on("tap", "edge", (evt) => {
       const edge = evt.target;
       const linkData = links.find((l) => l.id === edge.id());
@@ -254,26 +214,26 @@ export default function NetworkMap({
       }
     });
 
-    // Moving Signal Animation Loop along active lines!
+    // Moving Signal Animation along active cables!
     let offset = 0;
-    const animateSignalFlow = () => {
-      offset = (offset - 0.7) % 32;
+    const animateSignal = () => {
+      offset = (offset - 0.75) % 32;
       try {
         const activeEdges = cy.edges('[status = "ACTIVE"], [status = "RECOVERED"]');
         if (activeEdges.length > 0) {
           activeEdges.style("line-dash-offset", offset);
         }
       } catch (e) {
-        // Safe catch if destroyed
+        // Safe catch
       }
-      animFrameRef.current = requestAnimationFrame(animateSignalFlow);
+      animFrameRef.current = requestAnimationFrame(animateSignal);
     };
-    animFrameRef.current = requestAnimationFrame(animateSignalFlow);
+    animFrameRef.current = requestAnimationFrame(animateSignal);
 
     cyRef.current = cy;
     setTimeout(() => {
       cy.resize();
-      cy.fit(null, 50);
+      cy.fit(null, 60);
     }, 150);
 
     return () => {
@@ -288,10 +248,10 @@ export default function NetworkMap({
 
   return (
     <div className="space-y-4">
-      {/* Top Map HUD Bar with Coffee Palette */}
+      {/* Top HUD Controls */}
       <div className="glass-panel p-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 bg-[#1e0a0d] px-4 py-2 rounded-xl border border-[rgba(199,183,163,0.3)]">
+          <div className="flex items-center gap-3 bg-[#230b0f] px-4 py-2 rounded-xl border border-[rgba(199,183,163,0.3)]">
             <div className={failedCount === 0 ? "led-pulse-green" : "led-pulse-red"} />
             <div>
               <div className="text-[10px] text-[#c7b7a3] font-semibold uppercase tracking-wider">Campus Signal Status</div>
@@ -302,7 +262,7 @@ export default function NetworkMap({
           </div>
 
           <div className="hidden sm:flex items-center gap-3 text-xs text-[#e8d8c4]">
-            <span className="flex items-center gap-1.5 bg-[#220b0f] px-3 py-1.5 rounded-lg border border-[rgba(199,183,163,0.2)]">
+            <span className="flex items-center gap-1.5 bg-[#230b0f] px-3 py-1.5 rounded-lg border border-[rgba(199,183,163,0.2)]">
               <span className="w-2.5 h-2.5 rounded-full bg-[#c7b7a3]" />
               Active Signal Cables: <strong className="text-white">{activeCount}</strong>
             </span>
@@ -332,7 +292,7 @@ export default function NetworkMap({
             <ZoomOut className="w-4 h-4" />
           </button>
           <button
-            onClick={() => cyRef.current?.fit(null, 50)}
+            onClick={() => cyRef.current?.fit(null, 60)}
             title="Reset Camera"
             className="btn-action-outline"
           >
@@ -341,34 +301,25 @@ export default function NetworkMap({
         </div>
       </div>
 
-      {/* Main Canvas with Moving Signal Animation */}
+      {/* Main Amrita Satellite Imagery Canvas with 3D Buildings */}
       <div
-        className="relative w-full rounded-2xl overflow-hidden border border-[rgba(199,183,163,0.3)] shadow-2xl blueprint-grid"
-        style={{ height: "640px" }}
+        className="relative w-full rounded-2xl overflow-hidden border border-[rgba(199,183,163,0.35)] shadow-2xl"
+        style={{
+          height: "660px",
+          backgroundImage: `url("${AMRITA_SATELLITE_SVG}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
       >
         <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-        {/* Map Legend Overlay */}
-        <div className="absolute bottom-4 left-4 glass-panel p-3 text-[11px] space-y-1.5 border border-[rgba(199,183,163,0.3)] pointer-events-auto">
-          <div className="text-xs font-bold text-[#e8d8c4] mb-1 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-[#c7b7a3]" /> Campus Hardware Legend
-          </div>
-          <div className="flex items-center gap-2 text-[#c7b7a3]">
-            <span>📡 Tower</span>
-            <span className="ml-2">🔀 Router</span>
-            <span className="ml-2">📶 Switch</span>
-            <span className="ml-2">🗄️ Server</span>
-            <span className="ml-2">💻 PC Lab</span>
-          </div>
-          <div className="flex items-center gap-2 text-[#e8d8c4] pt-1 border-t border-[rgba(199,183,163,0.2)]">
-            <span className="w-4 h-0.5 bg-[#c7b7a3] inline-block" /> Live Signal (Flowing)
-            <span className="w-4 h-0.5 bg-rose-500 inline-block ml-2" /> Cut/Severed
-            <span className="w-4 h-0.5 bg-emerald-400 inline-block ml-2" /> Recovered
-            <span className="w-4 h-0.5 border-t border-dotted border-[#6d2932] inline-block ml-2" /> Standby
-          </div>
+        {/* Satellite Map Attribution Pill */}
+        <div className="absolute top-3 left-3 bg-[#150608]/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[rgba(199,183,163,0.3)] text-[11px] text-[#e8d8c4] flex items-center gap-1.5 font-mono">
+          <Satellite className="w-3.5 h-3.5 text-[#c7b7a3]" />
+          Amrita Campus Satellite Aerial View
         </div>
 
-        {/* Floating Quick Action Card on Link Click */}
+        {/* Floating Action Card when Link is Clicked */}
         {clickedLink && (
           <div className="absolute top-4 right-4 glass-panel-glow p-4 w-80 space-y-3 z-30 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-[rgba(199,183,163,0.2)] pb-2">
