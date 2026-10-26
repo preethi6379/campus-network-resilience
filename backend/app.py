@@ -6,6 +6,13 @@ API Contract Reference: Section 5 of Project Blueprint
 """
 
 import os
+import sys
+
+# Ensure repository root is in sys.path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from flask import Flask, jsonify, request
 from backend.config import Config
 from backend.services.network_service import NetworkService
