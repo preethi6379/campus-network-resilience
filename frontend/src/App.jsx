@@ -1,5 +1,6 @@
 /**
  * Campus Network Resilience Visualizer - Main Controller
+ * "Coffee" Executive Palette Theme: #561C24, #6D2932, #C7B7A3, #E8D8C4
  * Authors: Preetika (Frontend) & Avanish Ayyappan (Backend)
  */
 
@@ -96,9 +97,8 @@ export default function App() {
         impacted_count: res.impacted_services.length
       });
       setLctTrace(res.lct_trace || []);
-      showNotification(`Fiber ${linkId} cut. LCT cut executed in O(log V).`, "warning");
+      showNotification(`Fiber ${linkId} severed. LCT dynamic cut executed in O(log V).`, "warning");
 
-      // Auto-query recovery candidates
       const plan = await fetchRecoveryPlan();
       setRecoveryCandidates(plan.candidates || []);
 
@@ -150,7 +150,7 @@ export default function App() {
       });
       setLctTrace(res.lct_trace || []);
       setRecoveryCandidates([]);
-      showNotification(`Backup fiber ${candidateLinkId} deployed! Partition restored in O(log V).`, "success");
+      showNotification(`Backup route ${candidateLinkId} deployed! Partition resolved in O(log V).`, "success");
 
       const hist = await fetchHistory(30);
       setHistory(hist);
@@ -211,32 +211,32 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top NOC Header */}
-      <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
+    <div className="min-h-screen bg-[#150608] text-[#e8d8c4] flex flex-col">
+      {/* Top Header - Coffee Executive Theme */}
+      <header className="border-b border-[rgba(199,183,163,0.2)] bg-[#220b0f]/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Zap className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#561c24] to-[#6d2932] border border-[#c7b7a3]/40 flex items-center justify-center shadow-lg shadow-[#561c24]/50">
+              <Zap className="w-5 h-5 text-[#e8d8c4]" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight m-0">
+              <h1 className="text-base sm:text-lg font-bold text-[#e8d8c4] tracking-tight m-0">
                 Campus Network Resilience Visualizer
               </h1>
-              <div className="text-xs text-slate-400">
-                Link-Cut Tree Dynamic Forest Operations in <span className="text-cyan-400 font-mono font-bold">O(log V)</span> Time
+              <div className="text-xs text-[#c7b7a3]">
+                Link-Cut Tree Dynamic Forest Operations in <span className="text-white font-mono font-bold">O(log V)</span> Time
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block text-xs">
-              <div className="text-slate-300 font-semibold">Preetika & Avanish Ayyappan</div>
-              <div className="text-slate-500 text-[11px]">Amrita Campus Network Resilience Project</div>
+              <div className="text-[#e8d8c4] font-semibold">Preetika & Avanish Ayyappan</div>
+              <div className="text-[#c7b7a3] text-[11px]">Amrita Campus Network Resilience Project</div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${backendHealth === 'HEALTHY' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${backendHealth === 'HEALTHY' ? 'bg-[#561c24] text-[#e8d8c4] border border-[#c7b7a3]/40' : 'bg-rose-950 text-rose-300 border border-rose-800'}`}>
                 <span className={`w-2 h-2 rounded-full ${backendHealth === 'HEALTHY' ? 'bg-emerald-400' : 'bg-rose-400 animate-pulse'}`} />
                 API: {backendHealth}
               </span>
@@ -247,19 +247,19 @@ export default function App() {
                 title="Reload Topology"
                 className="btn-action-outline p-2"
               >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#e8d8c4]' : ''}`} />
               </button>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="max-w-7xl mx-auto px-4 py-1.5 border-t border-slate-800/60 flex gap-2 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-4 py-1.5 border-t border-[rgba(199,183,163,0.15)] flex gap-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("map")}
             className={`nav-tab-btn ${activeTab === "map" ? "active" : ""}`}
           >
-            <Map className="w-4 h-4" /> 1. Campus Map & Topology
+            <Map className="w-4 h-4" /> 1. Campus Map & Signals
           </button>
           <button
             onClick={() => setActiveTab("simulation")}
@@ -291,7 +291,7 @@ export default function App() {
       {/* Floating Notification */}
       {notification && (
         <div className="fixed top-24 right-6 z-50">
-          <div className={`px-4 py-3 rounded-xl shadow-2xl border text-xs font-semibold flex items-center gap-2 ${notification.type === 'error' ? 'bg-rose-950 border-rose-800 text-rose-200' : notification.type === 'warning' ? 'bg-amber-950 border-amber-800 text-amber-200' : 'bg-emerald-950 border-emerald-800 text-emerald-200'}`}>
+          <div className={`px-4 py-3 rounded-xl shadow-2xl border text-xs font-semibold flex items-center gap-2 ${notification.type === 'error' ? 'bg-[#561c24] border-rose-600 text-rose-200' : notification.type === 'warning' ? 'bg-[#6d2932] border-[#c7b7a3] text-[#e8d8c4]' : 'bg-[#2e0f14] border-[#c7b7a3] text-[#e8d8c4]'}`}>
             {notification.type === 'error' ? <AlertCircle className="w-4 h-4 text-rose-400" /> : <CheckCircle className="w-4 h-4 text-emerald-400" />}
             {notification.msg}
           </div>
@@ -348,7 +348,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
+      <footer className="border-t border-[rgba(199,183,163,0.15)] bg-[#150608] py-4 text-center text-xs text-[#c7b7a3]">
         Campus Network Resilience Visualizer • Splay-Tree LCT Dynamic Forest Operations in Amortized O(log V)
       </footer>
     </div>

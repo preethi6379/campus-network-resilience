@@ -1,6 +1,7 @@
 /**
- * High-Fidelity Campus Architectural Network Map
- * Author: Preetika & Avanish Ayyappan
+ * High-Fidelity Architectural Campus Network Map
+ * With Device SVG Pictures, Animated Moving Signals, and Coffee Palette
+ * Authors: Preetika & Avanish Ayyappan
  */
 
 import React, { useEffect, useRef, useState } from "react";
@@ -9,32 +10,22 @@ import {
   Maximize2,
   ZoomIn,
   ZoomOut,
-  AlertTriangle,
-  CheckCircle,
   Zap,
-  Activity,
+  RefreshCw,
   Layers,
-  RefreshCw
+  Activity
 } from "lucide-react";
+import { getNodeImage } from "../utils/deviceIcons";
 
-// Building Icons & Blueprint Definitions
+// Campus Architectural Building Enclosures
 const BUILDINGS = [
-  { id: "BLD_GATEWAY", label: "📡 Telecom & ISP Gateway Tower", color: "#6366f1" },
-  { id: "BLD_MAIN", label: "🏛️ Main Academic Core Block", color: "#3b82f6" },
-  { id: "BLD_DC", label: "🏢 Cloud Data Center & Vault", color: "#10b981" },
-  { id: "BLD_CSE", label: "💻 Computer Science Department", color: "#f59e0b" },
-  { id: "BLD_ADMIN", label: "🏢 Administrative Headquarters", color: "#06b6d4" },
-  { id: "BLD_LIB", label: "📚 Central University Library", color: "#ec4899" }
+  { id: "BLD_GATEWAY", label: "📡 Campus Gate & Telecom Tower", color: "#C7B7A3" },
+  { id: "BLD_MAIN", label: "🏛️ Main Academic Core Block", color: "#E8D8C4" },
+  { id: "BLD_DC", label: "🏢 Cloud Data Center & Vault", color: "#C7B7A3" },
+  { id: "BLD_CSE", label: "💻 Computer Science Department", color: "#C7B7A3" },
+  { id: "BLD_ADMIN", label: "🏢 Administrative Headquarters", color: "#C7B7A3" },
+  { id: "BLD_LIB", label: "📚 Central University Library", color: "#C7B7A3" }
 ];
-
-const NODE_COLORS = {
-  GATEWAY: "#818cf8",
-  CORE_ROUTER: "#60a5fa",
-  SWITCH: "#22d3ee",
-  SERVER: "#34d399",
-  LAB: "#fbbf24",
-  DEFAULT: "#94a3b8"
-};
 
 export default function NetworkMap({
   nodes = [],
@@ -49,6 +40,7 @@ export default function NetworkMap({
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
+  const animFrameRef = useRef(null);
   const [clickedLink, setClickedLink] = useState(null);
 
   useEffect(() => {
@@ -56,7 +48,7 @@ export default function NetworkMap({
 
     const elements = [];
 
-    // 1. Campus Buildings as Compound Parent Enclosures
+    // 1. Campus Buildings as Parent Compound Enclosures
     BUILDINGS.forEach((bld) => {
       elements.push({
         group: "nodes",
@@ -69,19 +61,19 @@ export default function NetworkMap({
       });
     });
 
-    // 2. Hardware Nodes inside Buildings
+    // 2. Network Hardware Nodes with SVG Illustrations
     nodes.forEach((n) => {
       elements.push({
         group: "nodes",
         data: {
           id: n.id,
           label: n.name,
-          parent: n.building_id, // attaches node inside building box
+          parent: n.building_id,
           nodeType: n.node_type,
-          bgColor: NODE_COLORS[n.node_type] || NODE_COLORS.DEFAULT
+          nodeImg: getNodeImage(n.node_type)
         },
         position: {
-          x: n.x_pos || 400,
+          x: n.x_pos || 500,
           y: n.y_pos || 300
         }
       });
@@ -112,64 +104,65 @@ export default function NetworkMap({
       layout: {
         name: "preset",
         fit: true,
-        padding: 50
+        padding: 60
       },
       style: [
-        // Building Enclosure Styling
+        // Building Enclosure Styling (Coffee Palette)
         {
           selector: "node[isBuilding]",
           style: {
             "label": "data(label)",
-            "background-color": "#090d16",
-            "background-opacity": 0.75,
+            "background-color": "#220b0f",
+            "background-opacity": 0.65,
             "border-width": 2,
             "border-style": "dashed",
-            "border-color": "data(borderColor)",
-            "border-opacity": 0.8,
-            "color": "#e2e8f0",
+            "border-color": "#c7b7a3",
+            "border-opacity": 0.6,
+            "color": "#e8d8c4",
             "font-size": "13px",
             "font-weight": "bold",
             "text-valign": "top",
             "text-halign": "center",
-            "text-margin-y": -12,
-            "padding": "32px",
+            "text-margin-y": -14,
+            "padding": "34px",
             "shape": "roundrectangle",
-            "corner-radius": "16px"
+            "corner-radius": "18px"
           }
         },
-        // Individual Network Device Node Styling
+        // Hardware Device Nodes with SVG Pictures
         {
           selector: "node[!isBuilding]",
           style: {
             "label": "data(label)",
-            "background-color": "data(bgColor)",
+            "background-image": "data(nodeImg)",
+            "background-fit": "contain",
+            "background-clip": "none",
+            "background-color": "#2e0f14",
+            "width": 50,
+            "height": 50,
+            "border-width": 2.5,
+            "border-color": "#c7b7a3",
+            "border-opacity": 0.9,
             "color": "#f8fafc",
             "font-size": "11px",
             "font-weight": 600,
             "text-valign": "bottom",
-            "text-margin-y": 8,
-            "width": 38,
-            "height": 38,
-            "border-width": 3,
-            "border-color": "#ffffff",
+            "text-margin-y": 10,
             "text-wrap": "wrap",
             "text-max-width": "120px",
-            "text-background-color": "#030712",
-            "text-background-opacity": 0.85,
+            "text-background-color": "#150608",
+            "text-background-opacity": 0.9,
             "text-background-padding": 3,
-            "text-background-shape": "roundrectangle",
-            "shadow-blur": 15,
-            "shadow-color": "data(bgColor)",
-            "shadow-opacity": 0.6
+            "text-background-shape": "roundrectangle"
           }
         },
         {
           selector: "node[!isBuilding]:selected",
           style: {
-            "border-color": "#38bdf8",
-            "border-width": 5,
-            "width": 46,
-            "height": 46
+            "border-color": "#e8d8c4",
+            "border-width": 4,
+            "width": 56,
+            "height": 56
           }
         },
         // Edge Base Styling
@@ -178,69 +171,74 @@ export default function NetworkMap({
           style: {
             "curve-style": "bezier",
             "label": "data(label)",
-            "color": "#cbd5e1",
+            "color": "#e8d8c4",
             "font-size": "10px",
             "font-weight": 600,
-            "text-background-color": "#030712",
-            "text-background-opacity": 0.9,
+            "text-background-color": "#150608",
+            "text-background-opacity": 0.95,
             "text-background-padding": 3,
             "text-background-shape": "roundrectangle",
-            "width": 4
+            "width": 4.5
           }
         },
-        // Edge Status Colors
+        // Active Links with Animated Signal Dash
         {
           selector: 'edge[status = "ACTIVE"]',
           style: {
-            "line-color": "#06b6d4",
-            "line-style": "solid",
-            "shadow-blur": 12,
-            "shadow-color": "#06b6d4",
-            "shadow-opacity": 0.5
+            "line-color": "#c7b7a3",
+            "line-style": "dashed",
+            "line-dash-pattern": [10, 6],
+            "shadow-blur": 10,
+            "shadow-color": "#e8d8c4",
+            "shadow-opacity": 0.4
           }
         },
+        // Failed / Severed Links
         {
           selector: 'edge[status = "FAILED"]',
           style: {
             "line-color": "#f43f5e",
-            "line-style": "dashed",
+            "line-style": "solid",
             "width": 5,
             "shadow-blur": 20,
             "shadow-color": "#f43f5e",
-            "shadow-opacity": 0.8
+            "shadow-opacity": 0.9
           }
         },
+        // Recovered Backup Links
         {
           selector: 'edge[status = "RECOVERED"]',
           style: {
             "line-color": "#10b981",
-            "line-style": "solid",
+            "line-style": "dashed",
+            "line-dash-pattern": [12, 6],
             "width": 5,
             "shadow-blur": 15,
             "shadow-color": "#10b981",
             "shadow-opacity": 0.7
           }
         },
+        // Standby Redundant Links
         {
           selector: 'edge[status = "STANDBY"]',
           style: {
-            "line-color": "#64748b",
+            "line-color": "#6d2932",
             "line-style": "dotted",
             "width": 3,
-            "opacity": 0.6
+            "opacity": 0.7
           }
         },
         {
           selector: "edge:selected",
           style: {
-            "line-color": "#fbbf24",
+            "line-color": "#e8d8c4",
             "width": 6
           }
         }
       ]
     });
 
-    // Map Tap Handlers
+    // Map Click Handlers
     cy.on("tap", "edge", (evt) => {
       const edge = evt.target;
       const linkData = links.find((l) => l.id === edge.id());
@@ -256,13 +254,30 @@ export default function NetworkMap({
       }
     });
 
+    // Moving Signal Animation Loop along active lines!
+    let offset = 0;
+    const animateSignalFlow = () => {
+      offset = (offset - 0.7) % 32;
+      try {
+        const activeEdges = cy.edges('[status = "ACTIVE"], [status = "RECOVERED"]');
+        if (activeEdges.length > 0) {
+          activeEdges.style("line-dash-offset", offset);
+        }
+      } catch (e) {
+        // Safe catch if destroyed
+      }
+      animFrameRef.current = requestAnimationFrame(animateSignalFlow);
+    };
+    animFrameRef.current = requestAnimationFrame(animateSignalFlow);
+
     cyRef.current = cy;
     setTimeout(() => {
       cy.resize();
-      cy.fit(null, 40);
+      cy.fit(null, 50);
     }, 150);
 
     return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       cy.destroy();
     };
   }, [nodes, links, selectedLinkId]);
@@ -273,29 +288,28 @@ export default function NetworkMap({
 
   return (
     <div className="space-y-4">
-      {/* Top Map HUD Bar */}
+      {/* Top Map HUD Bar with Coffee Palette */}
       <div className="glass-panel p-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          {/* Health Gauge */}
-          <div className="flex items-center gap-3 bg-slate-950/70 px-4 py-2 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-3 bg-[#1e0a0d] px-4 py-2 rounded-xl border border-[rgba(199,183,163,0.3)]">
             <div className={failedCount === 0 ? "led-pulse-green" : "led-pulse-red"} />
             <div>
-              <div className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Campus Health</div>
-              <div className={`text-base font-bold font-mono ${failedCount === 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                {healthPercent}% {failedCount === 0 ? "Normal" : "Degraded"}
+              <div className="text-[10px] text-[#c7b7a3] font-semibold uppercase tracking-wider">Campus Signal Status</div>
+              <div className={`text-base font-bold font-mono ${failedCount === 0 ? "text-[#e8d8c4]" : "text-rose-400"}`}>
+                {healthPercent}% {failedCount === 0 ? "Optimal (Transmitting)" : "Degraded (Partitioned)"}
               </div>
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-3 text-xs text-slate-300">
-            <span className="flex items-center gap-1.5 bg-slate-950/50 px-3 py-1.5 rounded-lg border border-slate-800">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
-              Active Links: <strong className="text-white">{activeCount}</strong>
+          <div className="hidden sm:flex items-center gap-3 text-xs text-[#e8d8c4]">
+            <span className="flex items-center gap-1.5 bg-[#220b0f] px-3 py-1.5 rounded-lg border border-[rgba(199,183,163,0.2)]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#c7b7a3]" />
+              Active Signal Cables: <strong className="text-white">{activeCount}</strong>
             </span>
             {failedCount > 0 && (
-              <span className="flex items-center gap-1.5 bg-rose-950/40 px-3 py-1.5 rounded-lg border border-rose-900/50 text-rose-300">
+              <span className="flex items-center gap-1.5 bg-[#561c24] px-3 py-1.5 rounded-lg border border-rose-500/40 text-rose-200">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-                Severed Links: <strong>{failedCount}</strong>
+                Severed Lines: <strong>{failedCount}</strong>
               </span>
             )}
           </div>
@@ -318,7 +332,7 @@ export default function NetworkMap({
             <ZoomOut className="w-4 h-4" />
           </button>
           <button
-            onClick={() => cyRef.current?.fit(null, 40)}
+            onClick={() => cyRef.current?.fit(null, 50)}
             title="Reset Camera"
             className="btn-action-outline"
           >
@@ -327,55 +341,59 @@ export default function NetworkMap({
         </div>
       </div>
 
-      {/* Main Map Container */}
-      <div className="relative w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl blueprint-grid" style={{ height: "600px" }}>
+      {/* Main Canvas with Moving Signal Animation */}
+      <div
+        className="relative w-full rounded-2xl overflow-hidden border border-[rgba(199,183,163,0.3)] shadow-2xl blueprint-grid"
+        style={{ height: "640px" }}
+      >
         <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
         {/* Map Legend Overlay */}
-        <div className="absolute bottom-4 left-4 glass-panel p-3 text-[11px] space-y-1.5 border border-slate-800/80 pointer-events-auto">
-          <div className="text-xs font-bold text-slate-200 mb-1 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" /> Campus Infrastructure
+        <div className="absolute bottom-4 left-4 glass-panel p-3 text-[11px] space-y-1.5 border border-[rgba(199,183,163,0.3)] pointer-events-auto">
+          <div className="text-xs font-bold text-[#e8d8c4] mb-1 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-[#c7b7a3]" /> Campus Hardware Legend
           </div>
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" /> Gateway ISP Tower
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-400 ml-2" /> Core Router
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 ml-2" /> Switch
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 ml-2" /> Server
+          <div className="flex items-center gap-2 text-[#c7b7a3]">
+            <span>📡 Tower</span>
+            <span className="ml-2">🔀 Router</span>
+            <span className="ml-2">📶 Switch</span>
+            <span className="ml-2">🗄️ Server</span>
+            <span className="ml-2">💻 PC Lab</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-400 pt-1 border-t border-slate-800/80">
-            <span className="w-4 h-0.5 bg-cyan-400 inline-block" /> Active
-            <span className="w-4 h-0.5 border-t border-dashed border-rose-500 inline-block ml-2" /> Failed
+          <div className="flex items-center gap-2 text-[#e8d8c4] pt-1 border-t border-[rgba(199,183,163,0.2)]">
+            <span className="w-4 h-0.5 bg-[#c7b7a3] inline-block" /> Live Signal (Flowing)
+            <span className="w-4 h-0.5 bg-rose-500 inline-block ml-2" /> Cut/Severed
             <span className="w-4 h-0.5 bg-emerald-400 inline-block ml-2" /> Recovered
-            <span className="w-4 h-0.5 border-t border-dotted border-slate-500 inline-block ml-2" /> Standby
+            <span className="w-4 h-0.5 border-t border-dotted border-[#6d2932] inline-block ml-2" /> Standby
           </div>
         </div>
 
         {/* Floating Quick Action Card on Link Click */}
         {clickedLink && (
           <div className="absolute top-4 right-4 glass-panel-glow p-4 w-80 space-y-3 z-30 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-xs font-mono font-bold text-cyan-400">{clickedLink.id}</span>
+            <div className="flex items-center justify-between border-b border-[rgba(199,183,163,0.2)] pb-2">
+              <span className="text-xs font-mono font-bold text-[#e8d8c4]">{clickedLink.id}</span>
               <button
                 onClick={() => setClickedLink(null)}
-                className="text-slate-400 hover:text-white text-xs px-1"
+                className="text-[#c7b7a3] hover:text-white text-xs px-1"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-1 text-xs text-slate-300">
+            <div className="space-y-1 text-xs text-[#c7b7a3]">
               <div className="flex justify-between">
-                <span className="text-slate-400">Route:</span>
+                <span className="text-slate-400">Endpoints:</span>
                 <span className="font-semibold text-white">{clickedLink.source} ➔ {clickedLink.target}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Latency:</span>
-                <span>{clickedLink.latency_ms} ms</span>
+                <span className="text-[#e8d8c4] font-semibold">{clickedLink.latency_ms} ms</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Operational Status:</span>
-                <span className={`font-bold ${clickedLink.status === 'ACTIVE' ? 'text-cyan-400' : clickedLink.status === 'FAILED' ? 'text-rose-400' : 'text-emerald-400'}`}>
-                  {clickedLink.status}
+                <span className="text-slate-400">Line Status:</span>
+                <span className={`font-bold ${clickedLink.status === 'ACTIVE' ? 'text-[#c7b7a3]' : clickedLink.status === 'FAILED' ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  {clickedLink.status} {clickedLink.status === 'ACTIVE' && '(Transmitting)'}
                 </span>
               </div>
             </div>
@@ -390,7 +408,7 @@ export default function NetworkMap({
                   disabled={loading}
                   className="btn-action-danger flex-1 text-xs justify-center"
                 >
-                  <Zap className="w-3.5 h-3.5" /> Cut Fiber
+                  <Zap className="w-3.5 h-3.5" /> Cut Cable
                 </button>
               ) : (
                 <button
