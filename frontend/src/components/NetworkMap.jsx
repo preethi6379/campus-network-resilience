@@ -145,54 +145,57 @@ export default function NetworkMap({
         {
           selector: 'edge[status = "ACTIVE"]',
           style: {
-            "line-color": "#c7b7a3",
+            "line-color": "#E8D8C4",
             "line-style": "dashed",
             "line-dash-pattern": [10, 6],
-            "shadow-blur": 12,
-            "shadow-color": "#e8d8c4",
-            "shadow-opacity": 0.5
+            "width": 5.5,
+            "shadow-blur": 25,
+            "shadow-color": "#FFE8D0",
+            "shadow-opacity": 0.85
           }
         },
-        // Failed / Severed Fiber Lines
+        // Failed / Severed Fiber Lines - Neon Red Laser Glow
         {
           selector: 'edge[status = "FAILED"]',
           style: {
-            "line-color": "#f43f5e",
+            "line-color": "#FF0055",
             "line-style": "solid",
-            "width": 5.5,
-            "shadow-blur": 22,
-            "shadow-color": "#f43f5e",
-            "shadow-opacity": 0.95
+            "width": 7,
+            "shadow-blur": 40,
+            "shadow-color": "#FF0055",
+            "shadow-opacity": 1
           }
         },
-        // Recovered Backup Fiber
+        // Recovered Backup Fiber - Radiant Electric Neon Green Glow
         {
           selector: 'edge[status = "RECOVERED"]',
           style: {
-            "line-color": "#10b981",
+            "line-color": "#00FF88",
             "line-style": "dashed",
-            "line-dash-pattern": [12, 6],
-            "width": 5.5,
-            "shadow-blur": 18,
-            "shadow-color": "#10b981",
-            "shadow-opacity": 0.8
+            "line-dash-pattern": [14, 6],
+            "width": 7.5,
+            "shadow-blur": 45,
+            "shadow-color": "#00FF88",
+            "shadow-opacity": 1
           }
         },
         // Standby Redundant Links
         {
           selector: 'edge[status = "STANDBY"]',
           style: {
-            "line-color": "#8f3d4a",
+            "line-color": "#B85D6E",
             "line-style": "dotted",
-            "width": 3,
+            "width": 3.5,
             "opacity": 0.75
           }
         },
         {
           selector: "edge:selected",
           style: {
-            "line-color": "#e8d8c4",
-            "width": 6
+            "line-color": "#FFF",
+            "width": 8,
+            "shadow-blur": 50,
+            "shadow-color": "#00FF88"
           }
         }
       ]
@@ -217,7 +220,7 @@ export default function NetworkMap({
     // Moving Signal Animation along active cables!
     let offset = 0;
     const animateSignal = () => {
-      offset = (offset - 0.75) % 32;
+      offset = (offset - 1.2) % 40;
       try {
         const activeEdges = cy.edges('[status = "ACTIVE"], [status = "RECOVERED"]');
         if (activeEdges.length > 0) {
