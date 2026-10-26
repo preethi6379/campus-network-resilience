@@ -22,6 +22,7 @@ import SimulationCenter from "./components/SimulationCenter";
 import LCTVisualizer from "./components/LCTVisualizer";
 import PathRadar from "./components/PathRadar";
 import AuditTimeline from "./components/AuditTimeline";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import {
   checkHealth,
@@ -297,51 +298,53 @@ export default function App() {
 
       {/* Main Tab Views */}
       <main className="max-w-7xl mx-auto w-full px-4 py-6 flex-1">
-        {activeTab === "map" && (
-          <NetworkMap
-            nodes={nodes}
-            links={links}
-            selectedLinkId={selectedLinkId}
-            onSelectLink={(id) => setSelectedLinkId(id)}
-            onFailLink={handleFailLink}
-            onRestoreLink={handleRestoreLink}
-            onApplyRecovery={handleApplyRecovery}
-            recoveryCandidates={recoveryCandidates}
-            loading={loading}
-          />
-        )}
+        <ErrorBoundary>
+          {activeTab === "map" && (
+            <NetworkMap
+              nodes={nodes}
+              links={links}
+              selectedLinkId={selectedLinkId}
+              onSelectLink={(id) => setSelectedLinkId(id)}
+              onFailLink={handleFailLink}
+              onRestoreLink={handleRestoreLink}
+              onApplyRecovery={handleApplyRecovery}
+              recoveryCandidates={recoveryCandidates}
+              loading={loading}
+            />
+          )}
 
-        {activeTab === "simulation" && (
-          <SimulationCenter
-            links={links}
-            servicesStatus={servicesStatus}
-            recoveryCandidates={recoveryCandidates}
-            onFailLink={handleFailLink}
-            onRestoreLink={handleRestoreLink}
-            onRequestRecovery={() => fetchRecoveryPlan().then((p) => setRecoveryCandidates(p.candidates || []))}
-            onApplyRecovery={handleApplyRecovery}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
-            loading={loading}
-          />
-        )}
+          {activeTab === "simulation" && (
+            <SimulationCenter
+              links={links}
+              servicesStatus={servicesStatus}
+              recoveryCandidates={recoveryCandidates}
+              onFailLink={handleFailLink}
+              onRestoreLink={handleRestoreLink}
+              onRequestRecovery={() => fetchRecoveryPlan().then((p) => setRecoveryCandidates(p.candidates || []))}
+              onApplyRecovery={handleApplyRecovery}
+              onUndo={handleUndo}
+              onRedo={handleRedo}
+              loading={loading}
+            />
+          )}
 
-        {activeTab === "lct" && (
-          <LCTVisualizer trace={lctTrace} />
-        )}
+          {activeTab === "lct" && (
+            <LCTVisualizer trace={lctTrace} />
+          )}
 
-        {activeTab === "radar" && (
-          <PathRadar
-            nodes={nodes}
-            onCheckConnectivity={handleCheckConnectivity}
-            connectivityResult={connectivityResult}
-            loading={loading}
-          />
-        )}
+          {activeTab === "radar" && (
+            <PathRadar
+              nodes={nodes}
+              onCheckConnectivity={handleCheckConnectivity}
+              connectivityResult={connectivityResult}
+              loading={loading}
+            />
+          )}
 
-        {activeTab === "history" && (
-          <AuditTimeline history={history} onRefresh={loadData} />
-        )}
+          {activeTab === "history" && (
+            <AuditTimeline history={history} onRefresh={loadData} />
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}
