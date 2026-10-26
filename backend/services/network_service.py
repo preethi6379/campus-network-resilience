@@ -33,6 +33,11 @@ class NetworkService:
 
         self.graph = CampusGraphModel()
 
+        # Load buildings
+        db_buildings = NetworkRepository.get_all_buildings()
+        for b in db_buildings:
+            self.graph.add_building(b)
+
         # Load nodes
         db_nodes = NetworkRepository.get_all_nodes()
         for n in db_nodes:

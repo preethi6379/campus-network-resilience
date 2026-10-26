@@ -45,6 +45,7 @@ def get_network():
     service = NetworkService.get_instance()
     state = service.get_network_state()
     return jsonify({
+        "buildings": state["network"].get("buildings", []),
         "nodes": state["network"]["nodes"],
         "links": state["network"]["links"],
         "services": state["network"]["services"],

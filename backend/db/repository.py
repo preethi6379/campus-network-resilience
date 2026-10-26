@@ -14,6 +14,16 @@ from backend.db.connection import DatabaseConnection
 class NetworkRepository:
 
     @staticmethod
+    def get_all_buildings() -> List[Dict[str, Any]]:
+        conn = DatabaseConnection.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT building_id, name, building_type, location_label FROM buildings")
+        rows = cursor.fetchall()
+        result = [dict(r) for r in rows]
+        conn.close()
+        return result
+
+    @staticmethod
     def get_all_nodes() -> List[Dict[str, Any]]:
         conn = DatabaseConnection.get_connection()
         cursor = conn.cursor()

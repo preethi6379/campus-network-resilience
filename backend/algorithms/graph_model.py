@@ -64,11 +64,15 @@ class CampusGraphModel:
     """
 
     def __init__(self):
+        self.buildings: Dict[str, Dict[str, Any]] = {}
         self.nodes: Dict[str, NetworkNode] = {}
         self.links: Dict[str, NetworkLink] = {}
         self.services: Dict[str, Dict[str, Any]] = {}
         self.service_dependencies: Dict[str, Set[str]] = {} # service_id -> set of required node_ids
         self.lct: LinkCutTree = LinkCutTree()
+
+    def add_building(self, building: Dict[str, Any]) -> None:
+        self.buildings[building["building_id"]] = building
 
     def add_node(self, node: NetworkNode) -> None:
         self.nodes[node.id] = node
@@ -263,6 +267,7 @@ class CampusGraphModel:
     def to_dict(self) -> Dict[str, Any]:
         """Returns the full network snapshot for API consumption."""
         return {
+            "buildings": list(self.buildings.values()),
             "nodes": [n.to_dict() for n in self.nodes.values()],
             "links": [l.to_dict() for l in self.links.values()],
             "services": list(self.services.values())
